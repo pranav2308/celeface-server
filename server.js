@@ -35,11 +35,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-	const { name, email, password, reTypePassword } = req.body;
-	if( password !== reTypePassword ){
-		res.status(400).json("Your password and re-typed password does not match. Please register again");
-		return;
-	}
+	const { name, email, password } = req.body;
 
 	for( user of dummyDatabase.users){
 		if( user.email === email ){
@@ -58,7 +54,15 @@ app.post('/register', (req, res) => {
 				entries : 0,
 				joinDate : new Date() 
 			});
-			res.status(200).json("you have been successfully registered!");
+			const lastRegisteredUser = dummyDatabase.users[dummyDatabase.users.length - 1];
+			const userData = {
+				id : lastRegisteredUser.id,
+				name : lastRegisteredUser.name,
+				email : lastRegisteredUser.email,
+				entries : lastRegisteredUser.entries,
+				joinDate : lastRegisteredUser.joinDate
+			};
+			res.status(200).json(userData);
 		})
 	})
 	
@@ -70,7 +74,14 @@ app.post('/signin', (req, res) => {
 	let foundUser = false;
 	for (user of dummyDatabase.users){
 		if(user.email === email && bcrypt.compareSync(password, user.password)){
-			res.status(200).json("you have successfully signed in!");
+			const userData = {
+				id : user.id,
+				name : user.name,
+				email : user.email,
+				entries : user.entries,
+				joinDate : user.joinDate
+			}
+			res.status(200).json(userData);
 			foundUser = true;
 			break;
 		}
@@ -79,6 +90,31 @@ app.post('/signin', (req, res) => {
 		res.status(400).json("Unable to sign-in. Please check your email and password");
 	}
 })
+
+
+// app.post('/signin', (req, res) => {
+// 	const { email, password } = req.body;
+// 	let foundUser = false;
+// 	for (user of dummyDatabase.users){
+// 		if(user.email === email && user.password === password){
+// 			const userData = {
+// 				id : user.id,
+// 				name : user.name,
+// 				email : user.email,
+// 				entries : user.entries,
+// 				joinDate : user.joinDate
+// 			}
+// 			res.status(200).json(userData);
+// 			foundUser = true;
+// 			break;
+// 		}
+// 	}
+// 	if(!foundUser){
+// 		res.status(400).json("Unable to sign-in. Please check your email and password");
+// 	}
+// })
+
+
 
 app.get('/profile/:id', (req, res) => {
 	const { id } = req.params;
