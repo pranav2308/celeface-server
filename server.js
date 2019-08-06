@@ -148,4 +148,9 @@ app.put('/image', (req, res) => {
 
 })
 
+app.use(function(req, res){
+	res.status(404).send("Page not found!");
+});
+
+
 app.listen(3000, () => {console.log('Listening to request on port 3000!')});
