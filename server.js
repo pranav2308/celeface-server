@@ -90,7 +90,7 @@ app.post('/register', (req, res) => {
 			res.status(409).json("User with same email already exists. You can try signing-in or choose another email for registration");
 		}
 		else{
-			res.status(400).json("Oops! Something went wrong. Please try to register again.");
+			res.status(400).json(`Oops! Something went wrong. You have been struck with ${error}`);
 		}
 	});
 });
@@ -144,17 +144,27 @@ app.post('/signin', (req, res) => {
 
 app.get('/profile/:id', (req, res) => {
 	const { id } = req.params;
-	let foundUser = false;
-	for (user of dummyDatabase.users ){
-		if(user.id === id){
-			foundUser = true;
-			res.status(200).json(user);
-			break;
+	database('users').where({id : id}).select('*')
+	.then(user => {
+		if(user.length){
+			res.status(200).json(user[0])
 		}
-	}
-	if(!foundUser){
-		res.status(400).json("Sorry! No such user exists");
-	}
+		else{
+			res.status(406).json("User with this id does not exist!");
+		}
+	}).catch(error => res.status(400).json(`Oops! Something went wrong. You have been struck with ${error}`));
+
+	// let foundUser = false;
+	// for (user of dummyDatabase.users ){
+	// 	if(user.id === id){
+	// 		foundUser = true;
+	// 		res.status(200).json(user);
+	// 		break;
+	// 	}
+	// }
+	// if(!foundUser){
+	// 	res.status(400).json("Sorry! No such user exists");
+	// }
 });
 
 app.put('/image', (req, res) => {
