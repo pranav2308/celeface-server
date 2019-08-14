@@ -169,18 +169,29 @@ app.get('/profile/:id', (req, res) => {
 
 app.put('/image', (req, res) => {
 	const { id } = req.body;
-	let foundUser = false;
-	for (user of dummyDatabase.users ){
-		if(user.id === id){
-			foundUser = true;
-			user.entries += 1;
-			res.status(200).json(user.entries);
-			break;
+	database('users').where('id', '=', id).increment('entries', 1)
+	.returning('entries')
+	.then(entries => {
+		if(entries.length){
+			res.status(200).json(entries[0]);
 		}
-	}
-	if(!foundUser){
-		res.status(400).json("Sorry! No such user exists");
-	}
+		else{
+			res.status(406).json("User with this id does not exist!");
+		}
+	}).catch(error => res.status(400).json(`Oops! Something went wrong. You have been struck with ${error}`));
+
+	// let foundUser = false;
+	// for (user of dummyDatabase.users ){
+	// 	if(user.id === id){
+	// 		foundUser = true;
+	// 		user.entries += 1;
+	// 		res.status(200).json(user.entries);
+	// 		break;
+	// 	}
+	// }
+	// if(!foundUser){
+	// 	res.status(400).json("Sorry! No such user exists");
+	// }
 
 });
 
