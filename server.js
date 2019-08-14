@@ -12,11 +12,10 @@ const database = knex({
   connection: {
     host : '127.0.0.1',
     user : 'postgres',
-    password : '',
+    password : 'pranav2308',
     database : 'face_recognition_db'
   }
 });
-
 
 
 const dummyDatabase = {
@@ -46,42 +45,55 @@ app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
 	res.send(dummyDatabase.users);
-})
+});
+
+// app.post('/register', (req, res) => {
+// 	const { name, email, password } = req.body;
+
+// 	for( user of dummyDatabase.users){
+// 		if( user.email === email ){
+// 			res.status(400).json("User with same email already exists. You can try signing-in or choose another email for registration");
+// 			return;
+// 		}
+// 	}
+// 	const id = (dummyDatabase.users.length + 1).toString();
+// 	bcrypt.genSalt(10, function(err, salt) {
+// 		bcrypt.hash(password, salt, function(err, hash){
+// 			dummyDatabase.users.push({
+// 				id : id,
+// 				name : name,
+// 				email : email,
+// 				password : hash,
+// 				entries : 0,
+// 				joinDate : new Date() 
+// 			});
+// 			const lastRegisteredUser = dummyDatabase.users[dummyDatabase.users.length - 1];
+// 			const userData = {
+// 				id : lastRegisteredUser.id,
+// 				name : lastRegisteredUser.name,
+// 				email : lastRegisteredUser.email,
+// 				entries : lastRegisteredUser.entries,
+// 				joinDate : lastRegisteredUser.joinDate
+// 			};
+// 			res.status(200).json(userData);
+// 		})
+// 	})
+// })
+
 
 app.post('/register', (req, res) => {
 	const { name, email, password } = req.body;
-
-	for( user of dummyDatabase.users){
-		if( user.email === email ){
-			res.status(400).json("User with same email already exists. You can try signing-in or choose another email for registration");
-			return;
+	database('users').returning('*').insert({name : name, email : email, joindate : new Date()})
+	.then(user => res.status(200).json(user[0]))
+	.catch(error => {
+		if(parseInt(error.code) === 23505){
+			res.status(409).json("User with same email already exists. You can try signing-in or choose another email for registration");
 		}
-	}
-	const id = (dummyDatabase.users.length + 1).toString();
-	bcrypt.genSalt(10, function(err, salt) {
-		bcrypt.hash(password, salt, function(err, hash){
-			dummyDatabase.users.push({
-				id : id,
-				name : name,
-				email : email,
-				password : hash,
-				entries : 0,
-				joinDate : new Date() 
-			});
-			const lastRegisteredUser = dummyDatabase.users[dummyDatabase.users.length - 1];
-			const userData = {
-				id : lastRegisteredUser.id,
-				name : lastRegisteredUser.name,
-				email : lastRegisteredUser.email,
-				entries : lastRegisteredUser.entries,
-				joinDate : lastRegisteredUser.joinDate
-			};
-			res.status(200).json(userData);
-		})
-	})
-	
-	
-})
+		else{
+			res.status(400).json("Oops! Something went wrong. Please try to register again.");
+		}
+	});
+});
 
 app.post('/signin', (req, res) => {
 	const { email, password } = req.body;
@@ -103,7 +115,7 @@ app.post('/signin', (req, res) => {
 	if(!foundUser){
 		res.status(400).json("Unable to sign-in. Please check your email and password");
 	}
-})
+});
 
 
 // app.post('/signin', (req, res) => {
@@ -143,7 +155,7 @@ app.get('/profile/:id', (req, res) => {
 	if(!foundUser){
 		res.status(400).json("Sorry! No such user exists");
 	}
-})
+});
 
 app.put('/image', (req, res) => {
 	const { id } = req.body;
@@ -160,7 +172,7 @@ app.put('/image', (req, res) => {
 		res.status(400).json("Sorry! No such user exists");
 	}
 
-})
+});
 
 app.use(function(req, res){
 	res.status(404).send("Page not found!");
