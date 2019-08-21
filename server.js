@@ -109,47 +109,13 @@ app.post('/register', (req, res) => {
 			});  
     	});
 	});
-
-	// database('users').returning('*').insert({name : name, email : email, joindate : new Date()})
-	// .then(user => res.status(200).json(user[0]))
-	// .catch(error => {
-	// 	if(parseInt(error.code) === 23505){
-	// 		res.status(409).json("User with same email already exists. You can try signing-in or choose another email for registration");
-	// 	}
-	// 	else{
-	// 		res.status(400).json(`Oops! Something went wrong. You have been struck with ${error}`);
-	// 	}
-	// });
 });
-
-app.post('/signin', (req, res) => {
-	const { email, password } = req.body;
-	let foundUser = false;
-	for (user of dummyDatabase.users){
-		if(user.email === email && bcrypt.compareSync(password, user.password)){
-			const userData = {
-				id : user.id,
-				name : user.name,
-				email : user.email,
-				entries : user.entries,
-				joinDate : user.joinDate
-			}
-			res.status(200).json(userData);
-			foundUser = true;
-			break;
-		}
-	}
-	if(!foundUser){
-		res.status(400).json("Unable to sign-in. Please check your email and password");
-	}
-});
-
 
 // app.post('/signin', (req, res) => {
 // 	const { email, password } = req.body;
 // 	let foundUser = false;
 // 	for (user of dummyDatabase.users){
-// 		if(user.email === email && user.password === password){
+// 		if(user.email === email && bcrypt.compareSync(password, user.password)){
 // 			const userData = {
 // 				id : user.id,
 // 				name : user.name,
@@ -165,8 +131,31 @@ app.post('/signin', (req, res) => {
 // 	if(!foundUser){
 // 		res.status(400).json("Unable to sign-in. Please check your email and password");
 // 	}
-// })
+// });
 
+
+app.post('/signin', (req, res) => {
+	const { email, password } = req.body;
+	database('login').where({email : email}).select('hash')
+	.then(data => {
+		if(data.length){
+			bcrypt.compare(password, data[0].hash, function(err, match){
+				if(match){
+					database('users').where({email : email}).select('*')
+					.then(user => res.status(200).json(user[0]))
+					.catch(error => res.status(400).json(`Oops! Something went wrong. You have been struck with ${error}`));
+				}
+				else{
+					res.status(401).json("Unable to sign-in. Please check your password");
+				}
+			});	
+		}
+		else{
+			res.status(401).json("Unable to sign-in. Please check your email");
+		}
+				
+	}).catch(error => res.status(400).json(`Oops! Something went wrong. You have been struck with ${error}`));
+})
 
 
 app.get('/profile/:id', (req, res) => {
