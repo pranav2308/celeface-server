@@ -89,7 +89,9 @@ app.get('/', (req, res) => {
 
 app.post('/register', (req, res) => {
 	const { name, email, password } = req.body;
-
+	console.log('name: ', name);
+	console.log('email: ', email);
+	console.log('password: ', password)
 	bcrypt.genSalt(10, function(err, salt) {
     	bcrypt.hash(password, salt, function(err, hash) {
 			database.transaction(function(trx){
@@ -110,6 +112,8 @@ app.post('/register', (req, res) => {
     	});
 	});
 });
+
+
 
 // app.post('/signin', (req, res) => {
 // 	const { email, password } = req.body;
@@ -142,18 +146,24 @@ app.post('/signin', (req, res) => {
 			bcrypt.compare(password, data[0].hash, function(err, match){
 				if(match){
 					database('users').where({email : email}).select('*')
-					.then(user => res.status(200).json(user[0]))
+					.then(user => {
+						if(user.length){
+							res.status(200).json(user[0]);
+						}
+						else{ //This case shouldn't arise since transaction would not let any data inconsistency. 
+							res.status(400).json(`Oops! Something went wrong. Unable to fetch the user data`);		
+						}
+					})
 					.catch(error => res.status(400).json(`Oops! Something went wrong. You have been struck with ${error}`));
 				}
 				else{
-					res.status(401).json("Unable to sign-in. Please check your password");
+					res.status(401).json("Unable to sign-in. Please check your email and password");
 				}
-			});	
+			});
 		}
 		else{
-			res.status(401).json("Unable to sign-in. Please check your email");
-		}
-				
+			res.status(401).json("Unable to sign-in. Please check your email and password");
+		}	
 	}).catch(error => res.status(400).json(`Oops! Something went wrong. You have been struck with ${error}`));
 })
 
@@ -211,9 +221,20 @@ app.put('/image', (req, res) => {
 
 });
 
+
+// const somefunc = () => {
+// 	console.log('in some function');
+// 	return function(){
+// 		console.log('in inner function');
+// 	}
+// }
+
+// app.put('/fake',somefunc());
+
+
 app.use(function(req, res){
 	res.status(404).send("Page not found!");
 });
 
-
-app.listen(3000, () => {console.log('Listening to request on port 3000!')});
+const PORT = process.env.PORT;
+app.listen(PORT || 3000, () => {console.log('Listening to request on port 3000!')});
