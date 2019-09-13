@@ -19,7 +19,7 @@ const database = knex({
     host : '127.0.0.1',
     user : 'postgres',
     password : 'pranav2308',
-    database : 'face_recognition_db'
+    database : 'CeleFaceDatabase'
   }
 });
 
