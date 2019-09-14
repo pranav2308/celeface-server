@@ -4,7 +4,7 @@ const app = express();
 const registerNewUser = require('./controllers/Registration/registerNewUser');
 const signInUser = require('./controllers/SignIn/signInUser');
 const getUserFromID = require('./controllers/userID/getUserFromID');
-const incrementImageEntries = require('./controllers/Entries/incrementImageentries');
+const submitImageEntries = require('./controllers/Entries/submitImageEntries');
 const detectFaces = require('./controllers/Faces/detectFaces');
 
 const bodyParser = require('body-parser');
@@ -37,7 +37,7 @@ app.post('/signin', signInUser(bcrypt, database));
 
 app.get('/profile/:id', getUserFromID(database));
 
-app.put('/image', incrementImageEntries(database));
+app.put('/image', submitImageEntries(database));
 
 app.post('/faces', detectFaces());
 
