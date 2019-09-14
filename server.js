@@ -6,7 +6,7 @@ const signInUser = require('./controllers/SignIn/signInUser');
 const getUserFromID = require('./controllers/userID/getUserFromID');
 const submitImageEntries = require('./controllers/Entries/submitImageEntries');
 const detectFaces = require('./controllers/Faces/detectFaces');
-
+const getLeaderBoard = require('./controllers/LeaderBoard/getLeaderBoard');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
@@ -40,6 +40,8 @@ app.get('/profile/:id', getUserFromID(database));
 app.put('/image', submitImageEntries(database));
 
 app.post('/faces', detectFaces());
+
+app.get('/leaderboard', getLeaderBoard(database));
 
 app.use(function(req, res){
 	res.status(404).send("Page not found!");
