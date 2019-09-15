@@ -6,6 +6,7 @@ const signInUser = require('./controllers/SignIn/signInUser');
 const getUserFromID = require('./controllers/userID/getUserFromID');
 const submitImageEntries = require('./controllers/Entries/submitImageEntries');
 const detectFaces = require('./controllers/Faces/detectFaces');
+const detectCelebrity = require('./controllers/Celebrity/detectCelebrity');
 const getLeaderBoard = require('./controllers/LeaderBoard/getLeaderBoard');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
@@ -40,6 +41,8 @@ app.get('/profile/:id', getUserFromID(database));
 app.put('/image', submitImageEntries(database));
 
 app.post('/faces', detectFaces());
+
+app.post('/celebrity', detectCelebrity());
 
 app.get('/leaderboard', getLeaderBoard(database));
 
