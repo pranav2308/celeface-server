@@ -16,11 +16,12 @@ const detectFaces = () => (req, res) =>{
 			res.status(500).json("Oops! something has gone bad with Clarifai API request!");
 		}
 	}).catch(error => {
-		if(error.status === 400){
+		if(error.message === "Request failed with status code 400"){
 			res.status(406).json("Image url does not redirect to image");
 		}
 		else{
-			res.status(400).json(`Oops! Something went wrong. You have been struck with ${error}`);	
+			res.status(400).json(error);
+			//res.status(400).json(`Oops! Something went wrong. You have been struck with ${error}`);	
 		}
 	})
 }
