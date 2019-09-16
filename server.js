@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
 
-const registerNewUser = require('./controllers/Registration/registerNewUser');
-const signInUser = require('./controllers/SignIn/signInUser');
-const getUserFromID = require('./controllers/userID/getUserFromID');
-const submitImageEntries = require('./controllers/Entries/submitImageEntries');
-const detectFaces = require('./controllers/Faces/detectFaces');
-const detectCelebrity = require('./controllers/Celebrity/detectCelebrity');
-const getLeaderBoard = require('./controllers/LeaderBoard/getLeaderBoard');
+const registerNewUser = require('./controllers/Registration/registerNewUser.js');
+const signInUser = require('./controllers/SignIn/signInUser.js');
+const getUserFromID = require('./controllers/UserID/getUserFromID.js');
+const submitImageEntries = require('./controllers/Entries/submitImageEntries.js');
+const detectFaces = require('./controllers/Faces/detectFaces.js');
+const detectCelebrity = require('./controllers/Celebrity/detectCelebrity.js');
+const getLeaderBoard = require('./controllers/LeaderBoard/getLeaderBoard.js');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 
 
 app.get('/', (req, res) => {
-	//res.send(dummyDatabase.users);
+	res.send("Successful deployment!");
 });
 
 app.post('/register', registerNewUser(bcrypt, database));
@@ -50,5 +50,4 @@ app.use(function(req, res){
 	res.status(404).send("Page not found!");
 });
 
-const PORT = process.env.PORT;
-app.listen(PORT || 3000, () => {console.log('Listening to request on port 3000!')});
+app.listen( process.env.PORT || 3000, () => {console.log(`Listening to request on port ${process.env.PORT}!`)});
