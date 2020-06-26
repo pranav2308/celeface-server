@@ -5,7 +5,11 @@ const app = new Clarifai.App({
 
 
 detectCelebrity = () => (req, res) => {
-
+	/*
+	* Detect the celebrity from the imageUrl
+	* If the response code is 10000 -> response is ok then send the response.
+	* Else return error resoponse. 
+	*/
 	const { imageUrl } = req.body;
 	
 	app.models.predict("e466caa0619f444ab97497640cefc4dc", imageUrl)

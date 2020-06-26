@@ -50,4 +50,4 @@ app.use(function(req, res){
 	res.status(404).send("Page not found!");
 });
 
-app.listen( process.env.PORT || 3000, () => {console.log(`Listening to request on port ${process.env.PORT}!`)});
+app.listen( process.env.PORT || 3000, () => {console.log(`Listening to request on port ${process.env.PORT || 3000}!`)});

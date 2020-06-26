@@ -1,5 +1,9 @@
 const signInUser = (bcrypt, database) => (req, res) => {
-	
+	/*
+	* Check the user's input with info in login table.
+	* If email and password match then send the user's info to frontend.
+	* else return error response.
+	*/
 	const { email, password } = req.body;
 	
 	database('login').where({email : email}).select('hash')

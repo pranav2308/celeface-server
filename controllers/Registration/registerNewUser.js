@@ -23,7 +23,13 @@ const isValidRegistrationForm = (firstName, lastName, email, password) => {
 
 
 const registerNewUser = (bcrypt, database) => (req, res) => {
-		
+	/*
+	* If the user registration info is correct then perform the transaction -> 
+	* 1. Enter the user's info in users table
+	* 2. Enter the user email and password in login table.
+	* If this transaction is successfull, then return user's info back to frontend.
+	* Else return error repsonse.  
+	*/	
 	const { firstName, lastName, email, password, country } = req.body;
 	if(isValidRegistrationForm(firstName, lastName, email, password)){
 		bcrypt.genSalt(10, function(err, salt) {

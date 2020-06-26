@@ -1,5 +1,9 @@
 const submitImageEntries = (database) => (req, res) => {
-	
+	/*
+	* Perform the transaction -> 1. insert the image url inserted by the user into the database
+	* 2. Then increment user's entry count by 1.
+	* If any of this setp causes error, return error response.  
+	*/
 	const { id, imageUrl, email } = req.body;
 	
 	database.transaction(function(trx){

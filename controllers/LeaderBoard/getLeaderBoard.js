@@ -1,4 +1,7 @@
 const getLeaderBoard = (database) => (req, res) => {
+	/*
+	* Get the top 10 entries from the leaderboard.
+	*/
 	database.select('firstname', 'lastname', 'country', 'entries').from('users').orderBy('entries', 'desc').limit(10)
 	.then(data => {
 		res.status(200).json(data);

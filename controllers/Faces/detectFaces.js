@@ -5,6 +5,12 @@ const app = new Clarifai.App({
 
 
 const detectFaces = () => (req, res) =>{
+	/*
+	* Detect the faces from the imageUrl
+	* If the response code is 10000 -> response is ok then send the response.
+	* Else return error resoponse. 
+	*/
+
 	const { imageUrl } = req.body;
 
 	app.models.predict(Clarifai.FACE_DETECT_MODEL, imageUrl)
